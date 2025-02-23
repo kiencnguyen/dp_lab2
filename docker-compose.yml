@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      OPEN_API_KEY_FILE: /run/secrets/openai_api_key
+      QDRANT_API_KEY_FILE: /run/secrets/qdrant_api_key
+      QDRANT_URL_FILE: /run/secrets/qdrant_url
+    secrets:
+      - openai_api_key
+      - qdrant_api_key
+      - qdrant_url
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    command: streamlit run ./src/frontend/main.py
+    environment:
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      QDRANT_API_KEY_FILE: /run/secrets/qdrant_api_key
+      QDRANT_URL_FILE: /run/secrets/qdrant_url
+    secrets:
+      - openai_api_key
+      - qdrant_api_key
+      - qdrant_url
+
+secrets:
+  openai_api_key:
+    file: ./secrets/openai_api_key.secret
+  qdrant_api_key:
+    file: ./secrets/qdrant_api_key.secret
+  qdrant_url:
+    file: ./secrets/qdrant_url.secret
